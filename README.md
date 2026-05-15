@@ -16,8 +16,6 @@ aligned to the NIST Cybersecurity Framework and CIS Critical Security Controls.
 
 ## Architecture
 
-## Architecture Diagram
-
 <img width="561" height="881" alt="aws-architecture" src="https://github.com/user-attachments/assets/a7d1cf61-5392-4ec5-8c42-dc439e7e86c4" />
 
 ---
