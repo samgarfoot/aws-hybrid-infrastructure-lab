@@ -16,6 +16,53 @@ aligned to the NIST Cybersecurity Framework and CIS Critical Security Controls.
 
 ## Architecture
 
+## Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph Local["💻 Local Environment (macOS M1)"]
+        MAC[MacBook Host]
+        WIN[Windows 11 Pro VMOn-Premise Endpoint]
+        ELASTIC[Elastic StackElasticsearch + Kibana]
+        FILEBEAT[FilebeatLog Shipper]
+        N8N[N8NSecurity Automation]
+    end
+
+    subgraph AWS["☁️ AWS Cloud — eu-west-2 London"]
+        subgraph VPC["VPC 10.0.0.0/16"]
+            subgraph PUBLIC["Public Subnet 10.0.0.0/24"]
+                EC2A[EC2 InstanceNginx Web Servert4g.micro]
+                CW[CloudWatchLog Groups]
+            end
+            subgraph PRIVATE["Private Subnet 10.0.1.0/24"]
+                PRIV[Internal ResourcesNo Internet Route]
+            end
+            IGW[Internet Gateway]
+            SG[Security GroupSSH restricted to admin IPHTTP + HTTPS open]
+        end
+        IAM[IAMLeast Privilege UserMFA Enforced]
+        S3[S3Public Access Blocked]
+    end
+
+    MAC --> WIN
+    MAC --> ELASTIC
+    MAC --> N8N
+    FILEBEAT --> ELASTIC
+    WIN -->|Hybrid Connectivity| EC2A
+    MAC -->|SSH — port 22| EC2A
+    IGW --> EC2A
+    EC2A --> CW
+    SG --> EC2A
+    IAM --> AWS
+    TERRAFORM[Terraform IaCAutomated Provisioning] --> VPC
+
+    style Local fill:#f0f4ff,stroke:#3366cc
+    style AWS fill:#fff4e6,stroke:#ff9900
+    style VPC fill:#e6f7ff,stroke:#0099cc
+    style PUBLIC fill:#e6ffe6,stroke:#00aa44
+    style PRIVATE fill:#fff0f0,stroke:#cc4444
+```
+
 ### On-Premise Environment
 - Windows 11 Pro virtual machine (UTM on macOS)
 - Hybrid connectivity to AWS cloud environment
